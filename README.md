@@ -7,11 +7,11 @@ Estudo de TDD com Nuxt.js, baseado no Módulo 2 do curso "Aprenda a testar Aplic
 
 #### Instalar dependências
 ```bash
-$ npm install
+$ npm i
 ```
 ou
 ```bash
-$ yarn install
+$ yarn
 ```
 #
 #### Inicializar a aplicação
