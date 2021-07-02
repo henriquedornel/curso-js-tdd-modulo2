@@ -3,33 +3,6 @@ import ProductCard from '@/components/ProductCard';
 import { makeServer } from '@/miragejs/server';
 import { CartManager } from '@/managers/CartManager';
 
-const mountProductCard = server => {
-  // Uma unidade do model product
-  const product = server.create('product', {
-    title: 'Relógio bonito',
-    price: '23.00',
-    image:
-      'https://images.unsplash.com/photo-1532667449560-72a95c8d381b?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80',
-  });
-
-  const cartManager = new CartManager();
-
-  const wrapper = mount(ProductCard, {
-    propsData: {
-      product,
-    },
-    mocks: {
-      $cart: cartManager,
-    },
-  });
-
-  return {
-    wrapper,
-    product,
-    cartManager,
-  };
-};
-
 describe('ProductCard - unit', () => {
   let server;
 
@@ -41,8 +14,35 @@ describe('ProductCard - unit', () => {
     server.shutdown();
   });
 
+  const mountProductCard = () => {
+    // Uma unidade do model product
+    const product = server.create('product', {
+      title: 'Relógio bonito',
+      price: '23.00',
+      image:
+        'https://images.unsplash.com/photo-1532667449560-72a95c8d381b?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80',
+    });
+
+    const cartManager = new CartManager();
+
+    const wrapper = mount(ProductCard, {
+      propsData: {
+        product,
+      },
+      mocks: {
+        $cart: cartManager,
+      },
+    });
+
+    return {
+      wrapper,
+      product,
+      cartManager,
+    };
+  };
+
   it('should mount the component', () => {
-    const { wrapper } = mountProductCard(server);
+    const { wrapper } = mountProductCard();
 
     // console.log(wrapper.vm);
     // console.log(wrapper.classes());
@@ -58,14 +58,14 @@ describe('ProductCard - unit', () => {
   });
 
   it('should match snapshot', () => {
-    const { wrapper } = mountProductCard(server);
+    const { wrapper } = mountProductCard();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   // xit('should add item to cart state on button click', async () => { // para não rodar esse teste
-  it('should add item to cart state on button click', async () => {
-    const { wrapper, cartManager, product } = mountProductCard(server);
+  it('should add item to cartState on button click', async () => {
+    const { wrapper, cartManager, product } = mountProductCard();
     // console.log(wrapper.find('button').element);
     const spy1 = jest.spyOn(cartManager, 'open'); // para espionar o método open
     // console.log(spy);

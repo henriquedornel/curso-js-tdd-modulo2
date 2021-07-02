@@ -16,7 +16,7 @@ describe('Cart - unit', () => {
     server.shutdown();
   });
 
-  const mountCart = server => {
+  const mountCart = () => {
     const products = server.createList('product', 2);
 
     const cartManager = new CartManager();
@@ -34,13 +34,13 @@ describe('Cart - unit', () => {
   };
 
   it('should mount the component', () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
 
     expect(wrapper.vm).toBeDefined();
   });
 
   it('should not display empty cart button when there are no products', () => {
-    const { cartManager } = mountCart(server);
+    const { cartManager } = mountCart();
 
     const wrapper = mount(Cart, {
       // wrapper sem nenhum produto
@@ -55,7 +55,7 @@ describe('Cart - unit', () => {
   });
 
   it('should emit close event when button gets clicked', async () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
     const button = wrapper.find('[data-testid="close-button"]');
 
     await button.trigger('click');
@@ -65,13 +65,13 @@ describe('Cart - unit', () => {
   });
 
   it('should hide the cart when no prop isOpen is passed', () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
 
     expect(wrapper.classes()).toContain('hidden');
   });
 
   it('should display the cart when prop isOpen is passed', async () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
 
     await wrapper.setProps({
       isOpen: true,
@@ -81,7 +81,7 @@ describe('Cart - unit', () => {
   });
 
   it('should display "Cart is empty" when there are no products', async () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
 
     wrapper.setProps({
       products: [],
@@ -93,7 +93,7 @@ describe('Cart - unit', () => {
   });
 
   it('should display 2 instances of CartItem when 2 products are provided', () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
 
     // console.log(wrapper.text());
 
@@ -102,14 +102,14 @@ describe('Cart - unit', () => {
   });
 
   it('should display a button to clear cart', () => {
-    const { wrapper } = mountCart(server);
+    const { wrapper } = mountCart();
     const button = wrapper.find('[data-testid="clear-cart-button"]');
 
     expect(button.exists()).toBe(true);
   });
 
   it('should call cart manager clearProducts() when button gets clicked', async () => {
-    const { wrapper, cartManager } = mountCart(server);
+    const { wrapper, cartManager } = mountCart();
     const spy = jest.spyOn(cartManager, 'clearProducts');
     await wrapper.find('[data-testid="clear-cart-button"]').trigger('click');
 

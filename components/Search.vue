@@ -15,7 +15,6 @@
         />
       </svg>
     </span>
-
     <input
       v-model="term"
       class="

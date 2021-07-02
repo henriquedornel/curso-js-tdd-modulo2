@@ -16,6 +16,7 @@ describe('Default Layout - unit', () => {
 
     return { wrapper };
   };
+
   it('should mount Cart', () => {
     const { wrapper } = mountLayout();
     expect(wrapper.findComponent(Cart).exists()).toBe(true);

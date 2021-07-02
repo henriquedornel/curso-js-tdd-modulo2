@@ -63,7 +63,7 @@
 
 <script>
 export default {
-  name: 'CartItam',
+  name: 'CartItem',
   props: {
     product: {
       type: Object,

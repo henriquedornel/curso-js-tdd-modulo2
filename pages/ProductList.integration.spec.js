@@ -6,6 +6,13 @@ import Search from '@/components/Search';
 import { makeServer } from '@/miragejs/server';
 import ProductList from '.';
 
+/**
+ * O Jest substitui o método get por sua própria
+ * função, a qual ele tem total conhecimento.
+ * Isso possibilita fazer assertions tais como
+ * quantas vezes o método foi executado e com quais
+ * parametros.
+ */
 jest.mock('axios', () => ({
   get: jest.fn(), // faz com que o get do Axios seja uma função conhecida pelo Jest
 }));
@@ -13,15 +20,39 @@ jest.mock('axios', () => ({
 describe('ProductList - integration', () => {
   let server;
 
+  /**
+   * Este método é executado antes de cada teste
+   */
   beforeEach(() => {
+    /**
+     * Cria uma instancia do MirageJS Server antes da
+     * execução de cada teste.
+     */
     server = makeServer({ environment: 'test' });
   });
 
   afterEach(() => {
+    /**
+     * Desliga a instância do MirageJS server depois
+     * da execução de cada teste.
+     */
     server.shutdown();
+
+    /**
+     * Faz o reset de tudo o que aconteceu com os mocks
+     * durante o teste. Por exemplo: zera a contagem
+     * de quantas vezes o mock foi executado.
+     */
     jest.clearAllMocks();
   });
 
+  /**
+   * Retorna uma lista de produtos. A lista é criada pelo
+   * server MirageJS. Permite criar produtos com dados
+   * específicos junto com os dados gerados pelo Faker.
+   * Basta passar no parametro overrides uma lista de
+   * objetos com as propriedades que se quer.
+   */
   const getProducts = (quantity = 10, overrides = []) => {
     let overrideList = [];
 
@@ -31,20 +62,22 @@ describe('ProductList - integration', () => {
       );
     }
 
-    const products = [
-      ...server.createList('product', quantity),
-      ...overrideList,
-    ];
-
-    return products;
+    return [...server.createList('product', quantity), ...overrideList];
   };
 
+  /**
+   * Monta o componente ProductList, fornecendo as dependências
+   * bem como a lista de produtos. Permite passar diferentes
+   * quantidades e também solicitar produtos com dados fixos.
+   * Por fim, permite também informar se o método axios.get
+   * retornará uma Promise.resolve() ou Promise.reject().
+   */
   const mountProductList = async (
     quantity = 10,
     overrides = [],
     shouldReject = false,
   ) => {
-    const products = await getProducts(quantity, overrides);
+    const products = getProducts(quantity, overrides);
     // console.log(products)
 
     if (shouldReject) {
@@ -61,6 +94,11 @@ describe('ProductList - integration', () => {
 
     await Vue.nextTick(); // para dar tempo de o Vue renderizar as coisas
 
+    /**
+     * O método retona um objeto com o wrapper e também
+     * com qualquer outra informação que possa ser necessária
+     * para que o teste funcione como se deve.
+     */
     return { wrapper, products };
   };
 
@@ -132,31 +170,26 @@ describe('ProductList - integration', () => {
     expect(cards).toHaveLength(11);
   });
 
-  it('should display the error message when Promise rejects', async () => {
+  it('should display error message when promise rejects', async () => {
     // para simular um erro no servidor
-    axios.get.mockReturnValue(Promise.reject(new Error('')));
 
-    const wrapper = mount(ProductList, {
-      mocks: {
-        $axios: axios,
-      },
-    });
+    // axios.get.mockReturnValue(Promise.reject(new Error('')));
 
-    await Vue.nextTick();
+    const { wrapper } = await mountProductList(1, {}, true);
 
     expect(wrapper.text()).toContain('Problemas ao carregar a lista!');
   });
 
   it('should display the total quantity of products', async () => {
     const { wrapper } = await mountProductList(27);
-    const label = wrapper.find('data-testid="total-quantity-label"');
+    const label = wrapper.find('[data-testid="total-quantity-label"]');
 
     expect(label.text()).toEqual('27 Products');
   });
 
   it('should display product (singular) when there is only 1 product', async () => {
     const { wrapper } = await mountProductList(1);
-    const label = wrapper.find('data-testid="total-quantity-label"');
+    const label = wrapper.find('[data-testid="total-quantity-label"]');
 
     expect(label.text()).toEqual('1 Product');
   });

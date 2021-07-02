@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import { makeServer } from '../../miragejs/server';
 
 context('Store', () => {
@@ -22,64 +20,7 @@ context('Store', () => {
     g('body').contains('Wrist Watch');
   });
 
-  // context.only('Store > Search for Products', () => { // executa somente esse context
-  context('Store > Search for Products', () => {
-    // it.only('should type in the search field', () => { // executa somente esse teste
-    it('should type in the search field', () => {
-      cy.visit('/');
-
-      g('input[type="search"]')
-        .type('Some text here')
-        .should('have.value', 'Some text here');
-    });
-
-    it('should return 1 product when "Relógio bonito" is used as search term', () => {
-      server.create('product', {
-        title: 'Relógio bonito',
-      });
-      server.createList('product', 10);
-
-      cy.visit('/');
-      g('input[type="search"]').type('Relógio bonito');
-      gid('search-form').submit();
-      gid('product-card').should('have.length', 1);
-    });
-
-    it('should not return any product', () => {
-      server.createList('product', 10);
-
-      cy.visit('/');
-      g('input[type="search"]').type('Relógio bonito');
-      gid('search-form').submit();
-      gid('product-card').should('have.length', 0);
-      g('body').contains('0 Products');
-    });
-  });
-
-  context('Store > Product List', () => {
-    it('should display "0 Products" when no product is returned', () => {
-      cy.visit('/');
-      gid('product-card').should('have.length', 0);
-      g('body').contains('0 Products');
-    });
-
-    it('should display "1 Product" when 1 product is returned', () => {
-      server.create('product');
-
-      cy.visit('/');
-      gid('product-card').should('have.length', 1);
-      g('body').contains('1 Product');
-    });
-
-    it('should display "10 Products" when 10 products are returned', () => {
-      server.createList('product', 10);
-
-      cy.visit('/');
-      gid('product-card').should('have.length', 10);
-      g('body').contains('10 Products');
-    });
-  });
-
+  // context.only('Store > Shopping Cart', () => { // executa somente esse context
   context('Store > Shopping Cart', () => {
     const quantity = 10;
 
@@ -88,6 +29,7 @@ context('Store', () => {
       cy.visit('/');
     });
 
+    // it.only('should not display shopping cart when page first loads', () => { // executa somente esse teste
     it('should not display shopping cart when page first loads', () => {
       gid('shopping-cart').should('have.class', 'hidden');
     });
@@ -105,7 +47,7 @@ context('Store', () => {
     it('should not display "Clear cart" button when cart is empty', () => {
       gid('toggle-button').as('toggleButton');
       g('@toggleButton').click();
-      gid('clear-cart-button').should('not.be.visible');
+      gid('clear-cart-button').should('not.exist');
     });
 
     it('should display "Cart is empty" message when there are no products', () => {
@@ -142,27 +84,6 @@ context('Store', () => {
       gid('cart-item').should('have.length', quantity);
     });
 
-    it('should remove a product from cart', () => {
-      cy.addToCart({ index: 3 });
-
-      gid('cart-item').as('cartItems');
-
-      g('@cartItems').should('have.length', 1);
-
-      gid('cart-item').first().find('[data-testid="remove-button"]').click();
-
-      g('@cartItems').should('have.length', 0);
-    });
-
-    it('should clear cart when "Clear cart" button is clicked', () => {
-      cy.addToCart({ indexes: [1, 2, 3] });
-
-      gid('cart-item').should('have.length', 3);
-      gid('clear-cart-button').click();
-      gid('cart-item').should('have.length', 0);
-      gid('shopping-cart').contains('Cart is empty');
-    });
-
     it('should display quantity 1 when product is added to cart', () => {
       cy.addToCart({ index: 1 });
       gid('quantity').contains(1);
@@ -192,6 +113,79 @@ context('Store', () => {
       gid('-').click();
       gid('-').click();
       gid('quantity').contains(0);
+    });
+
+    it('should remove a product from cart', () => {
+      cy.addToCart({ index: 2 });
+
+      gid('cart-item').as('cartItems');
+      g('@cartItems').should('have.length', 1);
+      g('@cartItems').first().find('[data-testid="remove-button"]').click();
+      g('@cartItems').should('have.length', 0);
+    });
+
+    it('should clear cart when "Clear cart" button is clicked', () => {
+      cy.addToCart({ indexes: [1, 2, 3] });
+
+      gid('cart-item').should('have.length', 3);
+      gid('clear-cart-button').click();
+      gid('cart-item').should('have.length', 0);
+    });
+  });
+
+  context('Store > Product List', () => {
+    it('should display "0 Products" when no product is returned', () => {
+      cy.visit('/');
+      gid('product-card').should('have.length', 0);
+      g('body').contains('0 Products');
+    });
+
+    it('should display "1 Product" when 1 product is returned', () => {
+      server.create('product');
+
+      cy.visit('/');
+      gid('product-card').should('have.length', 1);
+      g('body').contains('1 Product');
+    });
+
+    it('should display "10 Products" when 10 products are returned', () => {
+      server.createList('product', 10);
+
+      cy.visit('/');
+      gid('product-card').should('have.length', 10);
+      g('body').contains('10 Products');
+    });
+  });
+
+  context('Store > Search for Products', () => {
+    it('should type in the search field', () => {
+      cy.visit('/');
+
+      g('input[type="search"]')
+        .type('Some text here')
+        .should('have.value', 'Some text here');
+    });
+
+    it('should return 1 product when "Relógio bonito" is used as search term', () => {
+      server.create('product', {
+        title: 'Relógio bonito',
+      });
+      server.createList('product', 10);
+
+      cy.visit('/');
+      g('input[type="search"]').type('Relógio bonito');
+      gid('search-form').submit();
+      gid('product-card').should('have.length', 1);
+    });
+
+    it('should not return any product', () => {
+      server.createList('product', 10);
+
+      cy.visit('/');
+      g('input[type="search"]').type('Relógio bonito');
+      gid('search-form').submit();
+      gid('product-card').should('have.length', 0);
+      g('body').contains('0 Products');
     });
   });
 });

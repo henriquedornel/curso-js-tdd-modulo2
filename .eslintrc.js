@@ -10,11 +10,12 @@ module.exports = {
   extends: [
     '@nuxtjs',
     'prettier',
+    'prettier/vue',
     'plugin:prettier/recommended',
     'plugin:nuxt/recommended',
     'plugin:cypress/recommended',
   ],
-  plugins: ['prettier'],
+  plugins: ['prettier', 'cypress'],
   rules: {
     'vue/html-self-closing': 'off',
     'vue/singleline-html-element-content-newline': 'off',

@@ -34,7 +34,7 @@
 
 <script>
 import ProductCard from '@/components/ProductCard';
-import Search from '../components/Search.vue';
+import Search from '@/components/Search';
 
 export default {
   components: { ProductCard, Search },
@@ -58,7 +58,6 @@ export default {
       const {
         list: { length },
       } = this;
-
       return length === 1 ? `${length} Product` : `${length} Products`;
     },
   },

@@ -94,11 +94,14 @@ export default {
   props: {
     isOpen: {
       type: Boolean,
-      dafault: false,
+      default: false,
     },
     products: {
       type: Array,
-      default: () => [],
+      default: () => {
+        /* istanbul ignore next */
+        return [];
+      },
     },
   },
   computed: {

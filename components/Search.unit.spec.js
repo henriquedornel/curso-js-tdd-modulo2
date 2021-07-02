@@ -12,7 +12,7 @@ describe('Search - unit', () => {
     const wrapper = mount(Search);
     const term = 'termo para busca';
 
-    await wrapper.find('input[type="search"').setValue(term);
+    await wrapper.find('input[type="search"]').setValue(term);
     await wrapper.find('form').trigger('submit');
 
     expect(wrapper.emitted().doSearch).toBeTruthy();
@@ -24,7 +24,7 @@ describe('Search - unit', () => {
   it('should emit search event when search input is cleared', async () => {
     const wrapper = mount(Search);
     const term = 'termo para busca';
-    const input = wrapper.find('input[type="search"');
+    const input = wrapper.find('input[type="search"]');
 
     await input.setValue(term);
     await input.setValue('');

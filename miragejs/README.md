@@ -86,7 +86,6 @@ function MyApp({ Component, pageProps }) {
 
 export default MyApp
 ```
- 
 
 ### 4. Calling the API
 
